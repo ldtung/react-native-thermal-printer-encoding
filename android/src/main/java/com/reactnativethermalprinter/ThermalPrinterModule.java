@@ -9,16 +9,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.dantsu.escposprinter.EscPosPrinter;
-import com.dantsu.escposprinter.EscPosCharsetEncoding;
-import com.dantsu.escposprinter.connection.DeviceConnection;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
-import com.dantsu.escposprinter.connection.tcp.TcpConnection;
-import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
-import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
-import com.dantsu.escposprinter.exceptions.EscPosParserException;
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
+import com.dantsu.escposprinter_encoding.EscPosPrinter;
+import com.dantsu.escposprinter_encoding.EscPosCharsetEncoding;
+import com.dantsu.escposprinter_encoding.connection.DeviceConnection;
+import com.dantsu.escposprinter_encoding.connection.bluetooth.BluetoothPrintersConnections;
+import com.dantsu.escposprinter_encoding.connection.tcp.TcpConnection;
+import com.dantsu.escposprinter_encoding.exceptions.EscPosBarcodeException;
+import com.dantsu.escposprinter_encoding.exceptions.EscPosConnectionException;
+import com.dantsu.escposprinter_encoding.exceptions.EscPosEncodingException;
+import com.dantsu.escposprinter_encoding.exceptions.EscPosParserException;
+import com.dantsu.escposprinter_encoding.textparser.PrinterTextParserImg;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -32,7 +32,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.text.TextUtils;
 
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
+import com.dantsu.escposprinter_encoding.connection.bluetooth.BluetoothConnection;
 
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -190,7 +190,7 @@ public class ThermalPrinterModule extends ReactContextBaseJavaModule {
 
   private void printIt(DeviceConnection printerConnection, String payload, boolean autoCut, boolean openCashbox, double mmFeedPaper, double printerDpi, double printerWidthMM, double printerNbrCharactersPerLine) {
     try {
-      EscPosPrinter printer = new EscPosPrinter(printerConnection, (int) printerDpi, (float) printerWidthMM, (int) printerNbrCharactersPerLine, new EscPosCharsetEncoding("windows-1258", 52));
+      EscPosPrinter printer = new EscPosPrinter(printerConnection, (int) printerDpi, (float) printerWidthMM, (int) printerNbrCharactersPerLine, new EscPosCharsetEncoding("TCVN-3-1", 30));
       String processedPayload = preprocessImgTag(printer, payload);
 
       if (openCashbox) {
