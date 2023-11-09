@@ -190,7 +190,7 @@ public class ThermalPrinterModule extends ReactContextBaseJavaModule {
 
   private void printIt(DeviceConnection printerConnection, String payload, boolean autoCut, boolean openCashbox, double mmFeedPaper, double printerDpi, double printerWidthMM, double printerNbrCharactersPerLine) {
     try {
-      EscPosPrinter printer = new EscPosPrinter(printerConnection, (int) printerDpi, (float) printerWidthMM, (int) printerNbrCharactersPerLine, new EscPosCharsetEncoding("TCVN-3-1", 30));
+      EscPosPrinter printer = new EscPosPrinter(printerConnection, (int) printerDpi, (float) printerWidthMM, (int) printerNbrCharactersPerLine, new EscPosCharsetEncoding("windows-1252", 6));
       String processedPayload = preprocessImgTag(printer, payload);
 
       if (openCashbox) {

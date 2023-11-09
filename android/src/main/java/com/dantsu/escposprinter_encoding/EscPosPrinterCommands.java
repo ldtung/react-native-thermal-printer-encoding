@@ -430,6 +430,54 @@ public class EscPosPrinterCommands {
   private byte[] currentTextUnderline = new byte[0];
   private byte[] currentTextDoubleStrike = new byte[0];
 
+  private char[] unicodeChars = {'À', 'Á', 'Â', 'Ã', 'È', 'É', 'Ê', 'Ì', 'Í', 'Ò',
+    'Ó', 'Ô', 'Õ', 'Ù', 'Ú', 'Ý', 'à', 'á', 'â', 'ã',
+    'è', 'é', 'ê', 'ì', 'í', 'ò', 'ó', 'ô', 'õ', 'ù',
+    'ú', 'ý', 'Ă', 'ă', 'Đ', 'đ', 'Ĩ', 'ĩ', 'Ũ', 'ũ',
+    'Ơ', 'ơ', 'Ư', 'ư', 'Ạ', 'ạ', 'Ả', 'ả', 'Ấ', 'ấ',
+    'Ầ', 'ầ', 'Ẩ', 'ẩ', 'Ẫ', 'ẫ', 'Ậ', 'ậ', 'Ắ', 'ắ',
+    'Ằ', 'ằ', 'Ẳ', 'ẳ', 'Ẵ', 'ẵ', 'Ặ', 'ặ', 'Ẹ', 'ẹ',
+    'Ẻ', 'ẻ', 'Ẽ', 'ẽ', 'Ế', 'ế', 'Ề', 'ề', 'Ể', 'ể',
+    'Ễ', 'ễ', 'Ệ', 'ệ', 'Ỉ', 'ỉ', 'Ị', 'ị', 'Ọ', 'ọ',
+    'Ỏ', 'ỏ', 'Ố', 'ố', 'Ồ', 'ồ', 'Ổ', 'ổ', 'Ỗ', 'ỗ',
+    'Ộ', 'ộ', 'Ớ', 'ớ', 'Ờ', 'ờ', 'Ở', 'ở', 'Ỡ', 'ỡ',
+    'Ợ', 'ợ', 'Ụ', 'ụ', 'Ủ', 'ủ', 'Ứ', 'ứ', 'Ừ', 'ừ',
+    'Ử', 'ử', 'Ữ', 'ữ', 'Ự', 'ự', 'Ỳ', 'ỳ', 'Ỵ', 'ỵ',
+    'Ỷ', 'ỷ', 'Ỹ', 'ỹ'};
+  private char[] asciiChars = {'A', 'A', 'A', 'A', 'E', 'E', 'E', 'I', 'I', 'O',
+    'O', 'O', 'O', 'U', 'U', 'Y', 'a', 'a', 'a', 'a',
+    'e', 'e', 'e', 'i', 'i', 'o', 'o', 'o', 'o', 'u',
+    'u', 'y', 'A', 'a', 'D', 'd', 'I', 'i', 'U', 'u',
+    'O', 'o', 'U', 'u', 'A', 'a', 'A', 'a', 'A', 'a',
+    'A', 'a', 'A', 'a', 'A', 'a', 'A', 'a', 'A', 'a',
+    'A', 'a', 'A', 'a', 'A', 'a', 'A', 'a', 'E', 'e',
+    'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e',
+    'E', 'e', 'E', 'e', 'I', 'i', 'I', 'i', 'O', 'o',
+    'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o',
+    'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o',
+    'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u',
+    'U', 'u', 'U', 'u', 'U', 'u', 'Y', 'y', 'Y', 'y',
+    'Y', 'y', 'Y', 'y'};
+
+  private char[] windows1258Chars = {'À', 'Á', 'Â', 'Ă', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Í', 'Î', 'Ï',
+    'Đ', 'Ñ', 'Ó', 'Ô', 'Ơ', 'Ö', '×', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ư', 'ß',
+    'à', 'á', 'â', 'ă', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'í', 'î', 'ï',
+    'đ', 'ñ', 'ó', 'ô', 'ơ', 'ö', '÷', 'ø', 'ù', 'ú', 'û', 'ü', 'ư', '₫', 'ÿ'};
+  private char[] windows1252Chars = {'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï',
+    'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', '×', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'Þ', 'ß',
+    'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï',
+    'ð', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', '÷', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'þ', 'ÿ'};
+
+  private char[] tcvn31 = {'ă', 'â', 'ê', 'ô', 'ơ', 'ư', 'đ', 'à', 'ả', 'ã', 'á', 'ạ',
+    'ằ', 'ẳ', 'ẵ', 'ắ', 'ặ', 'ầ', 'ẩ', 'ẫ', 'ấ', 'ậ', 'è', 'ẻ', 'ẽ', 'é', 'ẹ', 'ề',
+    'ể', 'ễ', 'ế', 'ệ', 'ì', 'ỉ', 'ĩ', 'í', 'ị', 'ò', 'ỏ', 'õ', 'ó', 'ọ',
+    'ồ', 'ổ', 'ỗ', 'ố', 'ộ', 'ờ', 'ở', 'ỡ', 'ớ', 'ợ', 'ù', 'ủ', 'ũ', 'ú',
+    'ụ', 'ừ', 'ử', 'ữ', 'ứ', 'ự', 'ỳ', 'ỷ', 'ỹ', 'ý', 'ỵ'};
+  private char[] tcvn32 = {'Ă', 'Â', 'Ð', 'Ê', 'Ô', 'Ơ', 'Ư', 'À', 'Ả', 'Ã', 'Á', 'Ạ',
+    'Ằ', 'Ẳ', 'Ẵ', 'Ắ', 'Ặ', 'Ầ', 'Ẩ', 'Ẫ', 'Ấ', 'Ậ', 'È', 'Ẻ', 'Ẽ', 'É', 'Ẹ', 'Ề',
+    'Ể', 'Ễ', 'Ế', 'Ệ', 'Ì', 'Ỉ', 'Ĩ', 'Í', 'Ị', 'Ò', 'Ỏ', 'Õ', 'Ó', 'Ọ',
+    'Ồ', 'Ổ', 'Ỗ', 'Ố', 'Ộ', 'Ờ', 'Ở', 'Ỡ', 'Ớ', 'Ợ', 'Ù', 'Ủ', 'Ũ', 'Ú', 'Ụ',
+    'Ừ', 'Ử', 'Ữ', 'Ứ', 'Ự', 'Ỳ', 'Ỷ', 'Ỹ', 'Ý', 'Ỵ'};
   /**
    * Print text with the connected printer.
    *
@@ -467,42 +515,75 @@ public class EscPosPrinterCommands {
     }
 
     try {
-      byte[] textBytes = new TextUtils().getBytesWithEncoding(text, this.charsetEncoding.getName());
-      this.printerConnection.write(this.charsetEncoding.getCommand());
-      //this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_A);
+      // Convert string to char array
+      char[] charArray = text.toCharArray();
+      for (char c : charArray) {
+        String textToPrint = String.valueOf(c);
+        String encodingCharset = "windows-1252";
+        byte[] encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
+        int unicodexIdx = Arrays.binarySearch(this.unicodeChars, c);
+        if (unicodexIdx >= 0) {
+          if (Arrays.binarySearch(this.windows1252Chars, c) >= 0) {
+            textToPrint = String.valueOf(c);
+            encodingCharset = "windows-1252";
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
+          } else if (Arrays.binarySearch(this.windows1258Chars, c) >= 0) {
+            textToPrint = String.valueOf(c);
+            encodingCharset = "windows-1258";
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 52};
+          } else if (Arrays.binarySearch(this.tcvn31, c) >= 0) {
+            textToPrint = String.valueOf(c);
+            encodingCharset = "TCVN-3-1";
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 30};
+          } else if (Arrays.binarySearch(this.tcvn32, c) >= 0) {
+            textToPrint = String.valueOf(c);
+            encodingCharset = "TCVN-3-2";
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 31};
+          } else {
+            // Remove signal to ascii.
+            textToPrint = String.valueOf(asciiChars[unicodexIdx]);
+            encodingCharset = "windows-1252";
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
+          }
+        }
+
+        byte[] textBytes = new TextUtils().getBytesWithEncoding(textToPrint, encodingCharset);
+        this.printerConnection.write(encodingPrinterCommand);
+        //this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_A);
 
 
-      if (!Arrays.equals(this.currentTextSize, textSize)) {
-        this.printerConnection.write(textSize);
-        this.currentTextSize = textSize;
+        if (!Arrays.equals(this.currentTextSize, textSize)) {
+          this.printerConnection.write(textSize);
+          this.currentTextSize = textSize;
+        }
+
+        if (!Arrays.equals(this.currentTextDoubleStrike, textDoubleStrike)) {
+          this.printerConnection.write(textDoubleStrike);
+          this.currentTextDoubleStrike = textDoubleStrike;
+        }
+
+        if (!Arrays.equals(this.currentTextUnderline, textUnderline)) {
+          this.printerConnection.write(textUnderline);
+          this.currentTextUnderline = textUnderline;
+        }
+
+        if (!Arrays.equals(this.currentTextBold, textBold)) {
+          this.printerConnection.write(textBold);
+          this.currentTextBold = textBold;
+        }
+
+        if (!Arrays.equals(this.currentTextColor, textColor)) {
+          this.printerConnection.write(textColor);
+          this.currentTextColor = textColor;
+        }
+
+        if (!Arrays.equals(this.currentTextReverseColor, textReverseColor)) {
+          this.printerConnection.write(textReverseColor);
+          this.currentTextReverseColor = textReverseColor;
+        }
+
+        this.printerConnection.write(textBytes);
       }
-
-      if (!Arrays.equals(this.currentTextDoubleStrike, textDoubleStrike)) {
-        this.printerConnection.write(textDoubleStrike);
-        this.currentTextDoubleStrike = textDoubleStrike;
-      }
-
-      if (!Arrays.equals(this.currentTextUnderline, textUnderline)) {
-        this.printerConnection.write(textUnderline);
-        this.currentTextUnderline = textUnderline;
-      }
-
-      if (!Arrays.equals(this.currentTextBold, textBold)) {
-        this.printerConnection.write(textBold);
-        this.currentTextBold = textBold;
-      }
-
-      if (!Arrays.equals(this.currentTextColor, textColor)) {
-        this.printerConnection.write(textColor);
-        this.currentTextColor = textColor;
-      }
-
-      if (!Arrays.equals(this.currentTextReverseColor, textReverseColor)) {
-        this.printerConnection.write(textReverseColor);
-        this.currentTextReverseColor = textReverseColor;
-      }
-
-      this.printerConnection.write(textBytes);
 
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
