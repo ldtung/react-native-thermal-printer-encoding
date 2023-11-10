@@ -530,15 +530,15 @@ public class EscPosPrinterCommands {
           } else if (Arrays.binarySearch(this.windows1258Chars, c) >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "windows-1258";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 52};
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) this.charsetEncoding.getWindows1258()};
           } else if (Arrays.binarySearch(this.tcvn31, c) >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "TCVN-3-1";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 30};
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) this.charsetEncoding.getTcvn1()};
           } else if (Arrays.binarySearch(this.tcvn32, c) >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "TCVN-3-2";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 31};
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) this.charsetEncoding.getTcvn2()};
           } else {
             // Remove signal to ascii.
             textToPrint = String.valueOf(asciiChars[unicodexIdx]);

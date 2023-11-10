@@ -190,7 +190,28 @@ public class ThermalPrinterModule extends ReactContextBaseJavaModule {
 
   private void printIt(DeviceConnection printerConnection, String payload, boolean autoCut, boolean openCashbox, double mmFeedPaper, double printerDpi, double printerWidthMM, double printerNbrCharactersPerLine) {
     try {
-      EscPosPrinter printer = new EscPosPrinter(printerConnection, (int) printerDpi, (float) printerWidthMM, (int) printerNbrCharactersPerLine, new EscPosCharsetEncoding("windows-1252", 6));
+      EscPosPrinter printer;
+      EscPosCharsetEncoding textEncoding = new EscPosCharsetEncoding("windows-1252", 6);
+      if (payload != null && payload.startsWith("[BEGIN]")) {
+        int beginIndex = payload.indexOf("[BEGIN]");
+        int endIndex = payload.indexOf("[END]") + "[END]".length();
+        String encodingStr = payload.substring(beginIndex, endIndex);
+        encodingStr = encodingStr.replace("[BEGIN]", "");
+        encodingStr = encodingStr.replace("[END]", "");
+        String[] splits = encodingStr.split("&");
+        for (String split : splits) {
+          String[] encodingSplits = split.split("=");
+          if ("windows1258".equalsIgnoreCase(encodingSplits[0])) {
+            textEncoding.setWindows1258(Integer.valueOf(encodingSplits[1].replace("=", "")).intValue());
+          } else if ("tcvn1".equalsIgnoreCase(encodingSplits[0])) {
+            textEncoding.setTcvn1(Integer.valueOf(encodingSplits[1].replace("=", "")).intValue());
+          } else if ("tcvn2".equalsIgnoreCase(encodingSplits[0])) {
+            textEncoding.setTcvn2(Integer.valueOf(encodingSplits[1].replace("=", "")).intValue());
+          }
+        }
+        payload = payload.substring(endIndex, payload.length());
+      }
+      printer = new EscPosPrinter(printerConnection, (int) printerDpi, (float) printerWidthMM, (int) printerNbrCharactersPerLine, textEncoding);
       String processedPayload = preprocessImgTag(printer, payload);
 
       if (openCashbox) {
