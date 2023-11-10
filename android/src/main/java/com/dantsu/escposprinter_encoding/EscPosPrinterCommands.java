@@ -523,19 +523,19 @@ public class EscPosPrinterCommands {
         byte[] encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
         int unicodexIdx = Arrays.binarySearch(this.unicodeChars, c);
         if (unicodexIdx >= 0) {
-          if (Arrays.binarySearch(this.windows1252Chars, c) >= 0) {
+          if (Arrays.binarySearch(this.windows1252Chars, c) >= 0 && this.charsetEncoding.getWindows1252() >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "windows-1252";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
-          } else if (Arrays.binarySearch(this.windows1258Chars, c) >= 0) {
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getWindows1252() & 0xFF)};
+          } else if (Arrays.binarySearch(this.windows1258Chars, c) >= 0 && this.charsetEncoding.getWindows1258() >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "windows-1258";
             encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getWindows1258() & 0xFF)};
-          } else if (Arrays.binarySearch(this.tcvn31, c) >= 0) {
+          } else if (Arrays.binarySearch(this.tcvn31, c) >= 0 && this.charsetEncoding.getTcvn1() >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "TCVN-3-1";
             encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getTcvn1() & 0xFF)};
-          } else if (Arrays.binarySearch(this.tcvn32, c) >= 0) {
+          } else if (Arrays.binarySearch(this.tcvn32, c) >= 0 && this.charsetEncoding.getTcvn2() >= 0) {
             textToPrint = String.valueOf(c);
             encodingCharset = "TCVN-3-2";
             encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getTcvn2() & 0xFF)};

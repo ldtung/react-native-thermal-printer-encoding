@@ -4,6 +4,7 @@ public class EscPosCharsetEncoding {
     private String charsetName;
     private byte[] charsetCommand;
 
+    private int windows1252 = 6;
     private int windows1258 = 52;
     private int tcvn1 = 30;
     private int tcvn2 = 31;
@@ -49,5 +50,13 @@ public class EscPosCharsetEncoding {
 
   public void setTcvn2(int tcvn2) {
     this.tcvn2 = tcvn2;
+  }
+
+  public int getWindows1252() {
+    return windows1252;
+  }
+
+  public void setWindows1252(int windows1252) {
+    this.windows1252 = windows1252;
   }
 }

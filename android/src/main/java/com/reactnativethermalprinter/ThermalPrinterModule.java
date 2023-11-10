@@ -203,6 +203,8 @@ public class ThermalPrinterModule extends ReactContextBaseJavaModule {
           String[] encodingSplits = split.split("=");
           if ("windows1258".equalsIgnoreCase(encodingSplits[0])) {
             textEncoding.setWindows1258(Integer.valueOf(encodingSplits[1].replace("=", "")).intValue());
+          } else if ("windows1252".equalsIgnoreCase(encodingSplits[0])) {
+            textEncoding.setWindows1252(Integer.valueOf(encodingSplits[1].replace("=", "")).intValue());
           } else if ("tcvn1".equalsIgnoreCase(encodingSplits[0])) {
             textEncoding.setTcvn1(Integer.valueOf(encodingSplits[1].replace("=", "")).intValue());
           } else if ("tcvn2".equalsIgnoreCase(encodingSplits[0])) {
