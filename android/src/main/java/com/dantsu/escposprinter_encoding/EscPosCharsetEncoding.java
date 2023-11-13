@@ -8,6 +8,7 @@ public class EscPosCharsetEncoding {
     private int windows1258 = 52;
     private int tcvn1 = 30;
     private int tcvn2 = 31;
+    private int bitmap = 0;
 
     /**
      * Create new instance of EscPosCharsetEncoding.
@@ -58,5 +59,13 @@ public class EscPosCharsetEncoding {
 
   public void setWindows1252(int windows1252) {
     this.windows1252 = windows1252;
+  }
+
+  public int getBitmap() {
+    return bitmap;
+  }
+
+  public void setBitmap(int bitmap) {
+    this.bitmap = bitmap;
   }
 }

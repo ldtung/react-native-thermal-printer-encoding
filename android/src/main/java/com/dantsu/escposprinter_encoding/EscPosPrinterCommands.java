@@ -1,7 +1,11 @@
 package com.dantsu.escposprinter_encoding;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -514,6 +518,27 @@ public class EscPosPrinterCommands {
       textDoubleStrike = EscPosPrinterCommands.TEXT_DOUBLE_STRIKE_OFF;
     }
 
+
+    int canvasTextSize = 12;
+    if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_NORMAL)) {
+      canvasTextSize = 12;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_DOUBLE_HEIGHT)) {
+      canvasTextSize = 13;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_DOUBLE_WIDTH)) {
+      canvasTextSize = 16;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG)) {
+      canvasTextSize = 17;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_2)) {
+      canvasTextSize = 34;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_3)) {
+      canvasTextSize = 51;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_4)) {
+      canvasTextSize = 68;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_5)) {
+      canvasTextSize = 85;
+    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_6)) {
+      canvasTextSize = 102;
+    }
     try {
       // Convert string to char array
       char[] charArray = text.toCharArray();
@@ -522,6 +547,7 @@ public class EscPosPrinterCommands {
         String encodingCharset = "windows-1252";
         byte[] encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
         int unicodexIdx = Arrays.binarySearch(this.unicodeChars, c);
+        byte[] customTextBytes = null;
         if (unicodexIdx >= 0) {
           if (Arrays.binarySearch(this.windows1252Chars, c) >= 0 && this.charsetEncoding.getWindows1252() >= 0) {
             textToPrint = String.valueOf(c);
@@ -539,6 +565,26 @@ public class EscPosPrinterCommands {
             textToPrint = String.valueOf(c);
             encodingCharset = "TCVN-3-2";
             encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getTcvn2() & 0xFF)};
+          } else if (this.charsetEncoding.getBitmap() > 0) {
+            textToPrint = String.valueOf(c);
+            encodingCharset = "windows-1252";
+            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
+            Paint paint = new Paint();
+            paint.setTextSize(canvasTextSize); // set text size as needed
+
+            // Measure the width and height of the text
+            Rect textBounds = new Rect();
+            paint.getTextBounds(textToPrint, 0, textToPrint.length(), textBounds);
+            // Create a bitmap with the calculated width and height
+            Bitmap bitmap = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
+            // Create a canvas with the bitmap
+            Canvas canvas = new Canvas(bitmap);
+
+            // Draw the text onto the canvas
+            canvas.drawText(textToPrint, 0, -textBounds.top, paint);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            customTextBytes = stream.toByteArray();
           } else {
             // Remove signal to ascii.
             textToPrint = String.valueOf(asciiChars[unicodexIdx]);
@@ -546,8 +592,12 @@ public class EscPosPrinterCommands {
             encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
           }
         }
-
-        byte[] textBytes = new TextUtils().getBytesWithEncoding(textToPrint, encodingCharset);
+        byte[] textBytes;
+        if (customTextBytes == null) {
+          textBytes = new TextUtils().getBytesWithEncoding(textToPrint, encodingCharset);
+        } else {
+          textBytes = customTextBytes;
+        }
         this.printerConnection.write(encodingPrinterCommand);
         //this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_A);
 
