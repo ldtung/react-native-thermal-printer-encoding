@@ -482,6 +482,7 @@ public class EscPosPrinterCommands {
     'Ể', 'Ễ', 'Ế', 'Ệ', 'Ì', 'Ỉ', 'Ĩ', 'Í', 'Ị', 'Ò', 'Ỏ', 'Õ', 'Ó', 'Ọ',
     'Ồ', 'Ổ', 'Ỗ', 'Ố', 'Ộ', 'Ờ', 'Ở', 'Ỡ', 'Ớ', 'Ợ', 'Ù', 'Ủ', 'Ũ', 'Ú', 'Ụ',
     'Ừ', 'Ử', 'Ữ', 'Ứ', 'Ự', 'Ỳ', 'Ỷ', 'Ỹ', 'Ý', 'Ỵ'};
+
   /**
    * Print text with the connected printer.
    *
@@ -582,9 +583,7 @@ public class EscPosPrinterCommands {
 
             // Draw the text onto the canvas
             canvas.drawText(textToPrint, 0, -textBounds.top, paint);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            customTextBytes = stream.toByteArray();
+            customTextBytes = bitmapToBytes(bitmap, false);
           } else {
             // Remove signal to ascii.
             textToPrint = String.valueOf(asciiChars[unicodexIdx]);
