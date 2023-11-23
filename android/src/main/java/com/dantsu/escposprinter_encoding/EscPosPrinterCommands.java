@@ -482,7 +482,36 @@ public class EscPosPrinterCommands {
     'Ể', 'Ễ', 'Ế', 'Ệ', 'Ì', 'Ỉ', 'Ĩ', 'Í', 'Ị', 'Ò', 'Ỏ', 'Õ', 'Ó', 'Ọ',
     'Ồ', 'Ổ', 'Ỗ', 'Ố', 'Ộ', 'Ờ', 'Ở', 'Ỡ', 'Ớ', 'Ợ', 'Ù', 'Ủ', 'Ũ', 'Ú', 'Ụ',
     'Ừ', 'Ử', 'Ữ', 'Ứ', 'Ự', 'Ỳ', 'Ỷ', 'Ỹ', 'Ý', 'Ỵ'};
+  public static byte[] convertBitmapOfStringToBytes(Bitmap bitmap) {
+    int bitmapSize = bitmap.getRowBytes() * bitmap.getHeight();
+    int[] pixels = new int[bitmapSize];
+    bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
+    byte[] result = new byte[bitmapSize];
+    for (int i = 0; i < bitmapSize; ++i) {
+      result[i] = (byte) (pixels[i] & 0xFF);
+    }
+
+    return result;
+  }
+  public static Bitmap convertCharToBitmap(char unicodeChar, int textSize) {
+    Paint paint = new Paint();
+    paint.setTextSize(textSize); // Set the text size (adjust as needed)
+    paint.setAntiAlias(true);
+    paint.setSubpixelText(true);
+    paint.setStyle(Paint.Style.FILL);
+    paint.setColor(0xFF000000); // Set text color
+
+    float baseline = -paint.ascent();
+    int width = (int) (paint.measureText(String.valueOf(unicodeChar)) + 0.5f);
+    int height = (int) (baseline + paint.descent() + 0.5f);
+
+    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    Canvas canvas = new Canvas(bitmap);
+    canvas.drawText(String.valueOf(unicodeChar), 0, baseline, paint);
+
+    return bitmap;
+  }
   /**
    * Print text with the connected printer.
    *
@@ -567,23 +596,8 @@ public class EscPosPrinterCommands {
             encodingCharset = "TCVN-3-2";
             encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getTcvn2() & 0xFF)};
           } else if (this.charsetEncoding.getBitmap() > 0) {
-            textToPrint = String.valueOf(c);
-            encodingCharset = "windows-1252";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
-            Paint paint = new Paint();
-            paint.setTextSize(canvasTextSize); // set text size as needed
-
-            // Measure the width and height of the text
-            Rect textBounds = new Rect();
-            paint.getTextBounds(textToPrint, 0, textToPrint.length(), textBounds);
-            // Create a bitmap with the calculated width and height
-            Bitmap bitmap = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
-            // Create a canvas with the bitmap
-            Canvas canvas = new Canvas(bitmap);
-
-            // Draw the text onto the canvas
-            canvas.drawText(textToPrint, 0, -textBounds.top, paint);
-            customTextBytes = bitmapToBytes(bitmap, false);
+            Bitmap bitmap = convertCharToBitmap(c, canvasTextSize);
+            customTextBytes = convertBitmapOfStringToBytes(bitmap);
           } else {
             // Remove signal to ascii.
             textToPrint = String.valueOf(asciiChars[unicodexIdx]);
@@ -594,42 +608,40 @@ public class EscPosPrinterCommands {
         byte[] textBytes;
         if (customTextBytes == null) {
           textBytes = new TextUtils().getBytesWithEncoding(textToPrint, encodingCharset);
+          this.printerConnection.write(encodingPrinterCommand);
+          if (!Arrays.equals(this.currentTextSize, textSize)) {
+            this.printerConnection.write(textSize);
+            this.currentTextSize = textSize;
+          }
+
+          if (!Arrays.equals(this.currentTextDoubleStrike, textDoubleStrike)) {
+            this.printerConnection.write(textDoubleStrike);
+            this.currentTextDoubleStrike = textDoubleStrike;
+          }
+
+          if (!Arrays.equals(this.currentTextUnderline, textUnderline)) {
+            this.printerConnection.write(textUnderline);
+            this.currentTextUnderline = textUnderline;
+          }
+
+          if (!Arrays.equals(this.currentTextBold, textBold)) {
+            this.printerConnection.write(textBold);
+            this.currentTextBold = textBold;
+          }
+
+          if (!Arrays.equals(this.currentTextColor, textColor)) {
+            this.printerConnection.write(textColor);
+            this.currentTextColor = textColor;
+          }
+
+          if (!Arrays.equals(this.currentTextReverseColor, textReverseColor)) {
+            this.printerConnection.write(textReverseColor);
+            this.currentTextReverseColor = textReverseColor;
+          }
         } else {
           textBytes = customTextBytes;
         }
-        this.printerConnection.write(encodingPrinterCommand);
         //this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_A);
-
-
-        if (!Arrays.equals(this.currentTextSize, textSize)) {
-          this.printerConnection.write(textSize);
-          this.currentTextSize = textSize;
-        }
-
-        if (!Arrays.equals(this.currentTextDoubleStrike, textDoubleStrike)) {
-          this.printerConnection.write(textDoubleStrike);
-          this.currentTextDoubleStrike = textDoubleStrike;
-        }
-
-        if (!Arrays.equals(this.currentTextUnderline, textUnderline)) {
-          this.printerConnection.write(textUnderline);
-          this.currentTextUnderline = textUnderline;
-        }
-
-        if (!Arrays.equals(this.currentTextBold, textBold)) {
-          this.printerConnection.write(textBold);
-          this.currentTextBold = textBold;
-        }
-
-        if (!Arrays.equals(this.currentTextColor, textColor)) {
-          this.printerConnection.write(textColor);
-          this.currentTextColor = textColor;
-        }
-
-        if (!Arrays.equals(this.currentTextReverseColor, textReverseColor)) {
-          this.printerConnection.write(textReverseColor);
-          this.currentTextReverseColor = textReverseColor;
-        }
 
         this.printerConnection.write(textBytes);
       }
