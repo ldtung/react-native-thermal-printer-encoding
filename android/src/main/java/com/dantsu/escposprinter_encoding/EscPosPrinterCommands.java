@@ -482,18 +482,6 @@ public class EscPosPrinterCommands {
     'Ể', 'Ễ', 'Ế', 'Ệ', 'Ì', 'Ỉ', 'Ĩ', 'Í', 'Ị', 'Ò', 'Ỏ', 'Õ', 'Ó', 'Ọ',
     'Ồ', 'Ổ', 'Ỗ', 'Ố', 'Ộ', 'Ờ', 'Ở', 'Ỡ', 'Ớ', 'Ợ', 'Ù', 'Ủ', 'Ũ', 'Ú', 'Ụ',
     'Ừ', 'Ử', 'Ữ', 'Ứ', 'Ự', 'Ỳ', 'Ỷ', 'Ỹ', 'Ý', 'Ỵ'};
-  public static byte[] convertBitmapOfStringToBytes(Bitmap bitmap) {
-    int bitmapSize = bitmap.getRowBytes() * bitmap.getHeight();
-    int[] pixels = new int[bitmapSize];
-    bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-    byte[] result = new byte[bitmapSize];
-    for (int i = 0; i < bitmapSize; ++i) {
-      result[i] = (byte) (pixels[i] & 0xFF);
-    }
-
-    return result;
-  }
   public static Bitmap convertStringToBitmap(String text, int textSize) {
     Paint paint = new Paint();
     paint.setTextSize(textSize); // Set the text size (adjust as needed)
@@ -571,8 +559,8 @@ public class EscPosPrinterCommands {
     }
     try {
       Bitmap bitmap = convertStringToBitmap(text, canvasTextSize);
-      byte[] customTextBytes = convertBitmapOfStringToBytes(bitmap);
-      this.printerConnection.write(customTextBytes);
+      byte[] customTextBytes = bitmapToBytes(bitmap, true);
+      printImage(customTextBytes);
     } catch (Exception e) {
       e.printStackTrace();
       throw new EscPosEncodingException(e.getMessage());

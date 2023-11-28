@@ -12,10 +12,13 @@ public class TextUtils {
 
   }
 
-  public byte[] getBytesWithEncoding(String strText, String charset) throws UnsupportedEncodingException {
-    if (strText == null) {
+  public byte[] getBytesWithEncoding(String str, String charset) throws UnsupportedEncodingException {
+    if (str == null) {
       return null;
     }
+    byte[] b = str.getBytes("utf-8");
+
+    String strText  = (new String(b, "utf-8"));
     if ("TCVN-3-1".equalsIgnoreCase(charset)) {
       Charset charsetObj = new VNCharsetProvider().charsetForName("TCVN-3-1");
       return strText.getBytes(charsetObj);
