@@ -494,7 +494,7 @@ public class EscPosPrinterCommands {
 
     return result;
   }
-  public static Bitmap convertCharToBitmap(char unicodeChar, int textSize) {
+  public static Bitmap convertStringToBitmap(String text, int textSize) {
     Paint paint = new Paint();
     paint.setTextSize(textSize); // Set the text size (adjust as needed)
     paint.setAntiAlias(true);
@@ -503,12 +503,12 @@ public class EscPosPrinterCommands {
     paint.setColor(0xFF000000); // Set text color
 
     float baseline = -paint.ascent();
-    int width = (int) (paint.measureText(String.valueOf(unicodeChar)) + 0.5f);
+    int width = (int) (paint.measureText(text) + 0.5f);
     int height = (int) (baseline + paint.descent() + 0.5f);
 
     Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Canvas canvas = new Canvas(bitmap);
-    canvas.drawText(String.valueOf(unicodeChar), 0, baseline, paint);
+    canvas.drawText(text, 0, baseline, paint);
 
     return bitmap;
   }
@@ -570,83 +570,10 @@ public class EscPosPrinterCommands {
       canvasTextSize = 102;
     }
     try {
-      // Convert string to char array
-      char[] charArray = text.toCharArray();
-      for (char c : charArray) {
-        String textToPrint = String.valueOf(c);
-        String encodingCharset = "windows-1252";
-        byte[] encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
-        int unicodexIdx = Arrays.binarySearch(this.unicodeChars, c);
-        byte[] customTextBytes = null;
-        if (unicodexIdx >= 0) {
-          if (Arrays.binarySearch(this.windows1252Chars, c) >= 0 && this.charsetEncoding.getWindows1252() >= 0) {
-            textToPrint = String.valueOf(c);
-            encodingCharset = "windows-1252";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getWindows1252() & 0xFF)};
-          } else if (Arrays.binarySearch(this.windows1258Chars, c) >= 0 && this.charsetEncoding.getWindows1258() >= 0) {
-            textToPrint = String.valueOf(c);
-            encodingCharset = "windows-1258";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getWindows1258() & 0xFF)};
-          } else if (Arrays.binarySearch(this.tcvn31, c) >= 0 && this.charsetEncoding.getTcvn1() >= 0) {
-            textToPrint = String.valueOf(c);
-            encodingCharset = "TCVN-3-1";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getTcvn1() & 0xFF)};
-          } else if (Arrays.binarySearch(this.tcvn32, c) >= 0 && this.charsetEncoding.getTcvn2() >= 0) {
-            textToPrint = String.valueOf(c);
-            encodingCharset = "TCVN-3-2";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) (this.charsetEncoding.getTcvn2() & 0xFF)};
-          } else if (this.charsetEncoding.getBitmap() > 0) {
-            Bitmap bitmap = convertCharToBitmap(c, canvasTextSize);
-            customTextBytes = convertBitmapOfStringToBytes(bitmap);
-          } else {
-            // Remove signal to ascii.
-            textToPrint = String.valueOf(asciiChars[unicodexIdx]);
-            encodingCharset = "windows-1252";
-            encodingPrinterCommand = new byte[]{0x1B, 0x74, (byte) 6};
-          }
-        }
-        byte[] textBytes;
-        if (customTextBytes == null) {
-          textBytes = new TextUtils().getBytesWithEncoding(textToPrint, encodingCharset);
-          this.printerConnection.write(encodingPrinterCommand);
-          if (!Arrays.equals(this.currentTextSize, textSize)) {
-            this.printerConnection.write(textSize);
-            this.currentTextSize = textSize;
-          }
-
-          if (!Arrays.equals(this.currentTextDoubleStrike, textDoubleStrike)) {
-            this.printerConnection.write(textDoubleStrike);
-            this.currentTextDoubleStrike = textDoubleStrike;
-          }
-
-          if (!Arrays.equals(this.currentTextUnderline, textUnderline)) {
-            this.printerConnection.write(textUnderline);
-            this.currentTextUnderline = textUnderline;
-          }
-
-          if (!Arrays.equals(this.currentTextBold, textBold)) {
-            this.printerConnection.write(textBold);
-            this.currentTextBold = textBold;
-          }
-
-          if (!Arrays.equals(this.currentTextColor, textColor)) {
-            this.printerConnection.write(textColor);
-            this.currentTextColor = textColor;
-          }
-
-          if (!Arrays.equals(this.currentTextReverseColor, textReverseColor)) {
-            this.printerConnection.write(textReverseColor);
-            this.currentTextReverseColor = textReverseColor;
-          }
-        } else {
-          textBytes = customTextBytes;
-        }
-        //this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_A);
-
-        this.printerConnection.write(textBytes);
-      }
-
-    } catch (UnsupportedEncodingException e) {
+      Bitmap bitmap = convertStringToBitmap(text, canvasTextSize);
+      byte[] customTextBytes = convertBitmapOfStringToBytes(bitmap);
+      this.printerConnection.write(customTextBytes);
+    } catch (Exception e) {
       e.printStackTrace();
       throw new EscPosEncodingException(e.getMessage());
     }
