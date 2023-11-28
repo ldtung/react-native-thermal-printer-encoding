@@ -482,23 +482,30 @@ public class EscPosPrinterCommands {
     'Ể', 'Ễ', 'Ế', 'Ệ', 'Ì', 'Ỉ', 'Ĩ', 'Í', 'Ị', 'Ò', 'Ỏ', 'Õ', 'Ó', 'Ọ',
     'Ồ', 'Ổ', 'Ỗ', 'Ố', 'Ộ', 'Ờ', 'Ở', 'Ỡ', 'Ớ', 'Ợ', 'Ù', 'Ủ', 'Ũ', 'Ú', 'Ụ',
     'Ừ', 'Ử', 'Ữ', 'Ứ', 'Ự', 'Ỳ', 'Ỷ', 'Ỹ', 'Ý', 'Ỵ'};
-  public static Bitmap convertStringToBitmap(String text, int textSize) {
-    Paint paint = new Paint();
-    paint.setTextSize(textSize); // Set the text size (adjust as needed)
-    paint.setAntiAlias(true);
-    paint.setSubpixelText(true);
-    paint.setStyle(Paint.Style.FILL);
-    paint.setColor(0xFF000000); // Set text color
+  public static Bitmap convertStringToBitmap(String strText, int textSize) {
+    try {
+      byte[] b = strText.getBytes("utf-8");
 
-    float baseline = -paint.ascent();
-    int width = (int) (paint.measureText(text) + 0.5f);
-    int height = (int) (baseline + paint.descent() + 0.5f);
+      String text  = (new String(b, "utf-8"));
+      Paint paint = new Paint();
+      paint.setTextSize(textSize); // Set the text size (adjust as needed)
+      paint.setAntiAlias(true);
+      paint.setSubpixelText(true);
+      paint.setStyle(Paint.Style.FILL);
+      paint.setColor(0xFF000000); // Set text color
 
-    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-    canvas.drawText(text, 0, baseline, paint);
+      float baseline = -paint.ascent();
+      int width = (int) (paint.measureText(text) + 0.5f);
+      int height = (int) (baseline + paint.descent() + 0.5f);
 
-    return bitmap;
+      Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+      Canvas canvas = new Canvas(bitmap);
+      canvas.drawText(text, 0, baseline, paint);
+      return bitmap;
+    } catch (Exception ex) {
+      throw new IllegalArgumentException(ex.getMessage());
+    }
+
   }
   /**
    * Print text with the connected printer.
