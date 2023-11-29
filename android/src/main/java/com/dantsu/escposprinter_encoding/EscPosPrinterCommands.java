@@ -520,34 +520,57 @@ public class EscPosPrinterCommands {
       textDoubleStrike = EscPosPrinterCommands.TEXT_DOUBLE_STRIKE_OFF;
     }
 
-
-    int canvasTextSize = 12;
-    if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_NORMAL)) {
-      canvasTextSize = 12;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_DOUBLE_HEIGHT)) {
-      canvasTextSize = 13;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_DOUBLE_WIDTH)) {
-      canvasTextSize = 16;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG)) {
-      canvasTextSize = 17;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_2)) {
-      canvasTextSize = 34;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_3)) {
-      canvasTextSize = 51;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_4)) {
-      canvasTextSize = 68;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_5)) {
-      canvasTextSize = 85;
-    } else if (Arrays.equals(textSize, EscPosPrinterCommands.TEXT_SIZE_BIG_6)) {
-      canvasTextSize = 102;
-    }
     try {
-      Typeface typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
-      byte[] b = text.getBytes("utf-8");
-      String strText  = (new String(b, "utf-8"));
-      PrinterHelper helper = new PrinterHelper(this.printerConnection);
-      helper.printMultiLangText(strText, Paint.Align.LEFT, canvasTextSize, typeface);
-    } catch (Exception e) {
+      // Convert string to char array
+      char[] charArray = text.toCharArray();
+      String textToPrint = "";
+      for (char c : charArray) {
+        int unicodeIdx = Arrays.binarySearch(this.unicodeChars, c);
+        if (unicodeIdx >= 0) {
+          textToPrint = textToPrint + String.valueOf(asciiChars[unicodeIdx]);
+        } else {
+          textToPrint = textToPrint + String.valueOf(c);
+        }
+      }
+
+      byte[] textBytes = new TextUtils().getBytesWithEncoding(textToPrint, this.charsetEncoding.getName());
+      this.printerConnection.write(this.charsetEncoding.getCommand());
+      this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_B);
+
+
+      if (!Arrays.equals(this.currentTextSize, textSize)) {
+        this.printerConnection.write(textSize);
+        this.currentTextSize = textSize;
+      }
+
+      if (!Arrays.equals(this.currentTextDoubleStrike, textDoubleStrike)) {
+        this.printerConnection.write(textDoubleStrike);
+        this.currentTextDoubleStrike = textDoubleStrike;
+      }
+
+      if (!Arrays.equals(this.currentTextUnderline, textUnderline)) {
+        this.printerConnection.write(textUnderline);
+        this.currentTextUnderline = textUnderline;
+      }
+
+      if (!Arrays.equals(this.currentTextBold, textBold)) {
+        this.printerConnection.write(textBold);
+        this.currentTextBold = textBold;
+      }
+
+      if (!Arrays.equals(this.currentTextColor, textColor)) {
+        this.printerConnection.write(textColor);
+        this.currentTextColor = textColor;
+      }
+
+      if (!Arrays.equals(this.currentTextReverseColor, textReverseColor)) {
+        this.printerConnection.write(textReverseColor);
+        this.currentTextReverseColor = textReverseColor;
+      }
+
+      this.printerConnection.write(textBytes);
+
+    } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
       throw new EscPosEncodingException(e.getMessage());
     }
