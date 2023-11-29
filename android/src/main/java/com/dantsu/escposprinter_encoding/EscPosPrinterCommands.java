@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -16,6 +17,7 @@ import com.dantsu.escposprinter_encoding.connection.DeviceConnection;
 import com.dantsu.escposprinter_encoding.exceptions.EscPosBarcodeException;
 import com.dantsu.escposprinter_encoding.exceptions.EscPosConnectionException;
 import com.dantsu.escposprinter_encoding.exceptions.EscPosEncodingException;
+import com.dantsu.escposprinter_encoding.utils.PrinterHelper;
 import com.dantsu.escposprinter_encoding.utils.TextUtils;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -482,31 +484,6 @@ public class EscPosPrinterCommands {
     'Ể', 'Ễ', 'Ế', 'Ệ', 'Ì', 'Ỉ', 'Ĩ', 'Í', 'Ị', 'Ò', 'Ỏ', 'Õ', 'Ó', 'Ọ',
     'Ồ', 'Ổ', 'Ỗ', 'Ố', 'Ộ', 'Ờ', 'Ở', 'Ỡ', 'Ớ', 'Ợ', 'Ù', 'Ủ', 'Ũ', 'Ú', 'Ụ',
     'Ừ', 'Ử', 'Ữ', 'Ứ', 'Ự', 'Ỳ', 'Ỷ', 'Ỹ', 'Ý', 'Ỵ'};
-  public static Bitmap convertStringToBitmap(String strText, int textSize) {
-    try {
-      byte[] b = strText.getBytes("utf-8");
-
-      String text  = (new String(b, "utf-8"));
-      Paint paint = new Paint();
-      paint.setTextSize(textSize); // Set the text size (adjust as needed)
-      paint.setAntiAlias(true);
-      paint.setSubpixelText(true);
-      paint.setStyle(Paint.Style.FILL);
-      paint.setColor(0xFF000000); // Set text color
-
-      float baseline = -paint.ascent();
-      int width = (int) (paint.measureText(text) + 0.5f);
-      int height = (int) (baseline + paint.descent() + 0.5f);
-
-      Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-      Canvas canvas = new Canvas(bitmap);
-      canvas.drawText(text, 0, baseline, paint);
-      return bitmap;
-    } catch (Exception ex) {
-      throw new IllegalArgumentException(ex.getMessage());
-    }
-
-  }
   /**
    * Print text with the connected printer.
    *
@@ -565,9 +542,11 @@ public class EscPosPrinterCommands {
       canvasTextSize = 102;
     }
     try {
-      Bitmap bitmap = convertStringToBitmap(text, canvasTextSize);
-      byte[] customTextBytes = bitmapToBytes(bitmap, true);
-      printImage(customTextBytes);
+      Typeface typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
+      byte[] b = text.getBytes("utf-8");
+      String strText  = (new String(b, "utf-8"));
+      PrinterHelper helper = new PrinterHelper(this.printerConnection);
+      helper.printMultiLangText(strText, Paint.Align.LEFT, canvasTextSize, typeface);
     } catch (Exception e) {
       e.printStackTrace();
       throw new EscPosEncodingException(e.getMessage());
