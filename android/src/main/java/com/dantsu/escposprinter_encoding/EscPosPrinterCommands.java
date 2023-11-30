@@ -535,7 +535,7 @@ public class EscPosPrinterCommands {
 
       byte[] textBytes = new TextUtils().getBytesWithEncoding(textToPrint, this.charsetEncoding.getName());
       this.printerConnection.write(this.charsetEncoding.getCommand());
-      this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_B);
+      //this.printerConnection.write(EscPosPrinterCommands.TEXT_FONT_B);
 
 
       if (!Arrays.equals(this.currentTextSize, textSize)) {
