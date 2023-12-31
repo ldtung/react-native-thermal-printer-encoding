@@ -309,7 +309,7 @@ public class EscPosPrinterCommands {
    */
   public EscPosPrinterCommands(DeviceConnection printerConnection, com.dantsu.escposprinter_encoding.EscPosCharsetEncoding charsetEncoding) {
     this.printerConnection = printerConnection;
-    this.charsetEncoding = charsetEncoding != null ? charsetEncoding : new com.dantsu.escposprinter_encoding.EscPosCharsetEncoding("windows-1258", 6);
+    this.charsetEncoding = charsetEncoding != null ? charsetEncoding : new com.dantsu.escposprinter_encoding.EscPosCharsetEncoding("windows-1252", 6);
   }
 
   /**
@@ -450,20 +450,20 @@ public class EscPosPrinterCommands {
     'Ợ', 'ợ', 'Ụ', 'ụ', 'Ủ', 'ủ', 'Ứ', 'ứ', 'Ừ', 'ừ',
     'Ử', 'ử', 'Ữ', 'ữ', 'Ự', 'ự', 'Ỳ', 'ỳ', 'Ỵ', 'ỵ',
     'Ỷ', 'ỷ', 'Ỹ', 'ỹ'};
-  private String[] asciiChars = {"À", "Á", "Â", "A˜", "È", "É", "Ê", "`I", "Í", "`O",
-    "Ó", "Ô", "O˜", "Ù", "Ú", "Y´", "à", "á", "â", "a˜",
-    "è", "é", "ê", "`i", "í", "`o", "ó", "ô", "o˜", "ù",
-    "ú", "y´", "Ă", "ă", "Đ", "đ", "I˜", "i˜", "U˜", "u˜",
-    "Ơ", "ơ", "Ư", "ư", "A.", "a.", "A?", "a?", "Â’", "â’",
-    "`Â", "`â", "Â?", "â?", "Â˜", "â˜", "Â.", "â.", "Ă’", "ă’",
-    "`Ă", "`ă", "Ă?", "ă?", "Ă˜", "ă˜", "Ă.", "ă.", "E.", "e.",
-    "E?", "e?", "E˜", "e˜", "Ê´", "ê´", "`Ê", "`ê", "Ê?", "ê?",
-    "Ê˜", "ê˜", "Ê.", "ê.", "I?", "i?", "I.", "i.", "O.", "o.",
-    "O?", "o?", "Ô’", "ô’", "`Ô", "`ô", "Ô?", "ô?", "Ô˜", "ô˜",
-    "Ô.", "ô.", "Ơ’", "ơ’", "`Ơ", "`ơ", "Ơ?", "ơ?", "Ơ˜", "ơ˜",
-    "Ơ.", "ơ.", "U.", "u.", "U?", "u?", "ư´", "ư´", "`Ư", "`ư",
-    "Ư?", "ư?", "Ư˜", "ư˜", "Ư.", "ư.", "`Y", "`y", "Y.", "y.",
-    "Y?", "y?", "Y˜", "y˜"};
+  private char[] asciiChars = {'A', 'A', 'A', 'A', 'E', 'E', 'E', 'I', 'I', 'O',
+    'O', 'O', 'O', 'U', 'U', 'Y', 'a', 'a', 'a', 'a',
+    'e', 'e', 'e', 'i', 'i', 'o', 'o', 'o', 'o', 'u',
+    'u', 'y', 'A', 'a', 'D', 'd', 'I', 'i', 'U', 'u',
+    'O', 'o', 'U', 'u', 'A', 'a', 'A', 'a', 'A', 'a',
+    'A', 'a', 'A', 'a', 'A', 'a', 'A', 'a', 'A', 'a',
+    'A', 'a', 'A', 'a', 'A', 'a', 'A', 'a', 'E', 'e',
+    'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e',
+    'E', 'e', 'E', 'e', 'I', 'i', 'I', 'i', 'O', 'o',
+    'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o',
+    'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o', 'O', 'o',
+    'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u',
+    'U', 'u', 'U', 'u', 'U', 'u', 'Y', 'y', 'Y', 'y',
+    'Y', 'y', 'Y', 'y'};
 
   private char[] windows1258Chars = {'À', 'Á', 'Â', 'Ă', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Í', 'Î', 'Ï',
     'Đ', 'Ñ', 'Ó', 'Ô', 'Ơ', 'Ö', '×', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ư', 'ß',
