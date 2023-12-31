@@ -309,7 +309,7 @@ public class EscPosPrinterCommands {
    */
   public EscPosPrinterCommands(DeviceConnection printerConnection, com.dantsu.escposprinter_encoding.EscPosCharsetEncoding charsetEncoding) {
     this.printerConnection = printerConnection;
-    this.charsetEncoding = charsetEncoding != null ? charsetEncoding : new com.dantsu.escposprinter_encoding.EscPosCharsetEncoding("windows-1258", 94);
+    this.charsetEncoding = charsetEncoding != null ? charsetEncoding : new com.dantsu.escposprinter_encoding.EscPosCharsetEncoding("windows-1258", 6);
   }
 
   /**
