@@ -191,7 +191,7 @@ public class ThermalPrinterModule extends ReactContextBaseJavaModule {
   private void printIt(DeviceConnection printerConnection, String payload, boolean autoCut, boolean openCashbox, double mmFeedPaper, double printerDpi, double printerWidthMM, double printerNbrCharactersPerLine) {
     try {
       EscPosPrinter printer;
-      EscPosCharsetEncoding textEncoding = new EscPosCharsetEncoding("windows-1252", 6);
+      EscPosCharsetEncoding textEncoding = new EscPosCharsetEncoding("windows-1258", 6);
       if (payload != null && payload.startsWith("[BEGIN]")) {
         int beginIndex = payload.indexOf("[BEGIN]");
         int endIndex = payload.indexOf("[END]") + "[END]".length();
